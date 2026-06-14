@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>S-WORDS · Học từ vựng thông minh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="p-4 md:p-8 pb-24">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8 flex-wrap gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-crown text-2xl text-purple-600"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight">S-WORDS</h1>
+                    <p class="text-white/70 text-xs font-bold uppercase tracking-wider">Kho báu từ vựng · Học là nhớ</p>
+                </div>
+            </div>
+            <div class="flex gap-3 flex-wrap">
+                <a href="dashboard.html" class="stat-badge rounded-2xl px-5 py-2 text-white hover:bg-white/30 transition-all">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    <span class="text-xs font-bold">Bảng tin</span>
+                </a>
+                <a href="wrong-words.html" class="stat-badge rounded-2xl px-5 py-2 text-white hover:bg-white/30 transition-all">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span class="text-xs font-bold">Ôn tập câu sai</span>
+                    <span id="wrongCountBadge" class="ml-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[20px] inline-block text-center hidden">0</span>
+                </a>
+                <!-- Nút Sao lưu -->
+                <button id="backupBtn" class="stat-badge rounded-2xl px-5 py-2 text-white hover:bg-white/30 transition-all flex items-center gap-2">
+                    <i class="fas fa-download"></i>
+                    <span class="text-xs font-bold">Sao lưu</span>
+                </button>
+                <!-- Nút Khôi phục -->
+                <button id="restoreBtn" class="stat-badge rounded-2xl px-5 py-2 text-white hover:bg-white/30 transition-all flex items-center gap-2">
+                    <i class="fas fa-upload"></i>
+                    <span class="text-xs font-bold">Khôi phục</span>
+                </button>
+                <input type="file" id="restoreFile" accept=".json" class="hidden">
+                <!-- Streak -->
+                <div class="stat-badge rounded-2xl px-5 py-2 text-white">
+                    <i class="fas fa-fire-flame text-orange-400 mr-2"></i>
+                    <span class="font-bold text-lg" id="streakCount">0</span>
+                    <span class="text-xs">ngày</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHỦ ĐỀ -->
+        <div class="glass-modern p-6 mb-8">
+            <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
+                <h2 class="text-sm font-black text-gray-600 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-compass text-indigo-500"></i> KHÁM PHÁ CHỦ ĐỀ
+                    <span id="topicCount" class="bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full text-xs">0</span>
+                </h2>
+                <div class="relative">
+                    <input type="text" id="topicSearch" placeholder="🔍 Tìm chủ đề..." 
+                        class="text-sm pl-8 pr-3 py-2 rounded-full border-2 border-gray-200 focus:border-indigo-400 outline-none w-40 md:w-56">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                </div>
+            </div>
+            <div id="topic-container" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto transition-all duration-300"></div>
+            <div id="topicActionButtons" class="flex justify-center gap-3 mt-3">
+                <button id="showMoreBtn" class="text-indigo-500 text-sm hover:text-indigo-700 font-medium hidden">
+                    <i class="fas fa-chevron-down mr-1"></i> Xem thêm <span id="hiddenCount">0</span> chủ đề
+                </button>
+                <button id="collapseBtn" class="text-gray-500 text-sm hover:text-gray-700 font-medium hidden">
+                    <i class="fas fa-chevron-up mr-1"></i> Thu gọn
+                </button>
+            </div>
+        </div>
+
+        <!-- Card luyện tập chính -->
+        <div class="glass-modern p-6 md:p-10 word-card">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="text-center md:text-left space-y-6">
+                    <div class="inline-block px-4 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-black uppercase tracking-wider">
+                        <i class="fas fa-star mr-1"></i> THỬ THÁCH HÔM NAY
+                    </div>
+                    <div>
+                        <div class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">🇻🇳 Nghĩa tiếng Việt</div>
+                        <div id="vietnameseWord" class="text-5xl md:text-6xl font-extrabold text-gray-800 mt-2 leading-tight break-words">mặt trăng</div>
+                    </div>
+                    <div class="flex justify-center md:justify-start gap-3">
+                        <button id="speakBtn" class="bg-gray-100 hover:bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center text-indigo-600 transition-all shadow-md">
+                            <i class="fas fa-volume-up text-xl"></i>
+                        </button>
+                        <button id="randomBtn" class="bg-white border-2 border-gray-200 hover:border-indigo-300 px-5 py-2 rounded-full font-bold text-gray-700 transition flex items-center gap-2">
+                            <i class="fas fa-dice-d6"></i> Từ ngẫu nhiên
+                        </button>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-gray-600 font-bold text-sm uppercase tracking-wider mb-2">✍️ Viết bằng tiếng Anh</label>
+                        <div class="relative">
+                            <input type="text" id="answerInput" placeholder="Ví dụ: moon ..." 
+                                class="input-modern w-full p-5 text-lg font-medium border-2 border-gray-200 rounded-2xl focus:border-indigo-400 focus:outline-none transition-all pr-28">
+                            <button id="checkBtn" class="btn-primary absolute right-2 top-2 bottom-2 px-6 rounded-xl text-white font-bold text-sm shadow-lg">KIỂM TRA</button>
+                        </div>
+                    </div>
+                    <div id="resultArea" class="rounded-2xl p-4 transition-all min-h-[100px]"></div>
+                    <button id="nextBtn" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 text-lg shadow-xl">
+                        <i class="fas fa-arrow-right"></i> TỪ TIẾP THEO
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white/10 backdrop-blur-md border-t border-white/20 py-3 z-[100] shadow-[0_-8px_30px_rgb(0,0,0,0.12)]">
+            <p class="text-[11px] text-white/60 uppercase tracking-[2px] text-center flex items-center justify-center gap-3 font-medium select-none">
+                <span>© 2026</span> 
+                <span class="w-[1px] h-3 bg-white/30"></span> 
+                <span class="flex items-center gap-1.5">
+                    Thiết kế bởi 
+                    <span class="text-white font-bold bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(168,85,247,0.4)]">
+                        Cao Nguyễn Hồng Phi
+                    </span>
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <script src="vocab-data.js"></script>
+    <script src="js/wrong-words-manager.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- Script Backup & Restore -->
+    <script>
+        (function() {
+            const backupBtn = document.getElementById('backupBtn');
+            const restoreBtn = document.getElementById('restoreBtn');
+            const restoreFile = document.getElementById('restoreFile');
+            
+            function showToast(msg, isError = false) {
+                const toast = document.createElement('div');
+                toast.className = `fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full text-white text-sm font-medium ${isError ? 'bg-red-500' : 'bg-green-500'} animate-fade-in`;
+                toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'} mr-2"></i>${msg}`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2500);
+            }
+            
+            // Backup
+            if (backupBtn) {
+                backupBtn.addEventListener('click', () => {
+                    const data = {
+                        learnedWords: localStorage.getItem('learnedWords'),
+                        wrongWordsList: localStorage.getItem('wrongWordsList'),
+                        streak: localStorage.getItem('streak'),
+                        lastStudyDate: localStorage.getItem('lastStudyDate'),
+                        backupDate: new Date().toISOString()
+                    };
+                    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `swords_backup_${Date.now()}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast('✅ Đã tải xuống dữ liệu!');
+                });
+            }
+            
+            // Restore - mở file explorer
+            if (restoreBtn) {
+                restoreBtn.addEventListener('click', () => {
+                    restoreFile.click();
+                });
+            }
+            
+            // Xử lý file restore
+            if (restoreFile) {
+                restoreFile.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            if (data.learnedWords) localStorage.setItem('learnedWords', data.learnedWords);
+                            if (data.wrongWordsList) localStorage.setItem('wrongWordsList', data.wrongWordsList);
+                            if (data.streak) localStorage.setItem('streak', data.streak);
+                            if (data.lastStudyDate) localStorage.setItem('lastStudyDate', data.lastStudyDate);
+                            showToast('✅ Khôi phục thành công! Reload...');
+                            setTimeout(() => location.reload(), 1500);
+                        } catch(err) {
+                            showToast('❌ File không hợp lệ!', true);
+                        }
+                    };
+                    reader.readAsText(file);
+                    restoreFile.value = '';
+                });
+            }
+            
+            // Animation
+            const style = document.createElement('style');
+            style.textContent = `@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}.animate-fade-in{animation:fadeIn 0.2s ease-out}`;
+            document.head.appendChild(style);
+        })();
+    </script>
+</body>
+</html>

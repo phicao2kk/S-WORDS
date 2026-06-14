@@ -1,0 +1,243 @@
+/* style.css - Giao diện chung siêu đẹp */
+* {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.glass-modern {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.topic-chip {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.topic-chip.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+    transform: scale(1.05);
+}
+
+.input-modern {
+    transition: all 0.2s;
+}
+
+.input-modern:focus {
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px -10px rgba(102, 126, 234, 0.5);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.word-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.correct-answer {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    animation: pulse 0.5s ease;
+}
+
+.wrong-answer {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    animation: shake 0.3s ease;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.suggestion-tip {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 4px solid #f59e0b;
+}
+
+.stat-badge {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+/* Auth pages style */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.form-box {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 2rem;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.form-box input {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 1rem;
+    transition: all 0.2s;
+}
+
+.form-box input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-box button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Store management */
+.word-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.word-row:hover {
+    background: #f8fafc;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* style.css - Thêm vào cuối file */
+
+/* Fix header/footer bị đè */
+body {
+    padding-bottom: 80px;  /* Tạo khoảng trống cho footer */
+}
+
+/* Đảm bảo footer không đè lên nội dung */
+.fixed {
+    pointer-events: auto;
+}
+
+/* Container chính có margin bottom để tránh bị footer che */
+.max-w-6xl, .max-w-4xl, .max-w-5xl {
+    margin-bottom: 20px;
+}
+
+/* Responsive fix cho header và footer */
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 100px;
+    }
+    
+    .fixed.bottom-0 {
+        padding: 8px 0;
+    }
+    
+    .fixed.bottom-0 p {
+        font-size: 9px;
+        gap: 6px;
+    }
+    
+    /* Header trên mobile */
+    .flex.justify-between.items-center.mb-8 {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .flex.gap-3.flex-wrap {
+        justify-content: center;
+    }
+}

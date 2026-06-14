@@ -1,0 +1,60 @@
+<div class="glass-modern p-6 mb-8">
+    <h2 class="text-sm font-black text-gray-600 uppercase tracking-wider mb-4">💾 SAO LƯU & KHÔI PHỤC</h2>
+    <div class="flex gap-4 flex-wrap">
+        <button id="backupBtn" class="btn-primary text-white font-bold py-2 px-4 rounded-xl">
+            <i class="fas fa-download mr-2"></i> Tải xuống dữ liệu
+        </button>
+        <button id="restoreBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-xl">
+            <i class="fas fa-upload mr-2"></i> Khôi phục từ file
+        </button>
+        <input type="file" id="restoreFile" accept=".json" class="hidden">
+    </div>
+    <p class="text-xs text-gray-500 mt-3">Dữ liệu bao gồm: từ đã học, từ sai, streak. Không bao gồm kho từ vựng gốc.</p>
+</div>
+
+<script>
+    // Backup
+    document.getElementById('backupBtn')?.addEventListener('click', () => {
+        const data = {
+            learnedWords: localStorage.getItem('learnedWords'),
+            wrongWordsList: localStorage.getItem('wrongWordsList'),
+            streak: localStorage.getItem('streak'),
+            lastStudyDate: localStorage.getItem('lastStudyDate'),
+            backupDate: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `swords_backup_${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+    
+    // Restore
+    document.getElementById('restoreBtn')?.addEventListener('click', () => {
+        document.getElementById('restoreFile').click();
+    });
+    
+    document.getElementById('restoreFile')?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const data = JSON.parse(event.target.result);
+                if (data.learnedWords) localStorage.setItem('learnedWords', data.learnedWords);
+                if (data.wrongWordsList) localStorage.setItem('wrongWordsList', data.wrongWordsList);
+                if (data.streak) localStorage.setItem('streak', data.streak);
+                if (data.lastStudyDate) localStorage.setItem('lastStudyDate', data.lastStudyDate);
+                alert('✅ Khôi phục thành công! Trang sẽ tải lại.');
+                location.reload();
+            } catch(err) {
+                alert('❌ File không hợp lệ!');
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    });
+</script>

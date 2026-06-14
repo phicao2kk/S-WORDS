@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý ngân hàng từ vựng · S-WORDS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow">
+                    <i class="fas fa-database text-purple-600"></i>
+                </div>
+                <h1 class="text-2xl font-black text-white">🏪 Quản lý từ vựng</h1>
+            </div>
+            <a href="index.html" class="stat-badge rounded-xl px-4 py-2 text-white hover:bg-white/30 transition">
+                <i class="fas fa-arrow-left mr-1"></i> Quay lại
+            </a>
+        </div>
+
+        <!-- Thêm từ mới -->
+        <div class="glass-modern p-6 mb-8">
+            <h2 class="text-sm font-black text-gray-600 uppercase tracking-wider mb-4">➕ THÊM TỪ MỚI</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <input type="text" id="newVi" placeholder="Tiếng Việt" class="input-modern p-3 rounded-xl border-2 border-gray-200 focus:border-indigo-400 outline-none">
+                <input type="text" id="newEn" placeholder="Tiếng Anh" class="input-modern p-3 rounded-xl border-2 border-gray-200 focus:border-indigo-400 outline-none">
+                <select id="newTopic" class="input-modern p-3 rounded-xl border-2 border-gray-200 focus:border-indigo-400 outline-none bg-white">
+                    <option value="kitchen">🍳 Nhà bếp</option>
+                    <option value="life">🧬 Đời sống</option>
+                    <option value="universe">🌌 Vũ trụ</option>
+                    <option value="animals">🐾 Động vật</option>
+                    <option value="technology">💻 Công nghệ</option>
+                    <option value="travel">✈️ Du lịch</option>
+                </select>
+                <button id="addWordBtn" class="btn-primary text-white font-bold py-3 rounded-xl">➕ Thêm từ</button>
+            </div>
+        </div>
+
+        <!-- Danh sách từ vựng -->
+        <div class="glass-modern p-6">
+            <h2 class="text-sm font-black text-gray-600 uppercase tracking-wider mb-4">📋 DANH SÁCH TỪ VỰNG</h2>
+            <div id="wordList" class="space-y-6 max-h-[500px] overflow-y-auto">
+                <!-- JS sẽ đổ dữ liệu vào đây -->
+            </div>
+        </div>
+    </div>
+
+    <script src="vocab-data.js"></script>
+    <script src="js/store.js"></script>
+    <script>
+        // Tự động tạo dropdown từ dữ liệu vocab-data.js
+        function generateTopicOptions() {
+            const vocab = getVocabulary();
+            const select = document.getElementById('newTopic');
+            if (!select) return;
+            
+            select.innerHTML = '';
+            for (let key in vocab) {
+                const topic = vocab[key];
+                // Lấy icon từ tên chủ đề (vd: "🍳 NHÀ BẾP" -> lấy icon)
+                let icon = topic.name.split(' ')[0];
+                select.innerHTML += `<option value="${key}">${icon} ${topic.name}</option>`;
+            }
+        }
+        generateTopicOptions();
+    </script>
+</body>
+</html>
