@@ -412,7 +412,7 @@ const VOCABULARY = {
         ]
     },
 
-        // ==================== 22. QUẦN ÁO (CLOTHING) - 120+ từ ====================
+    // ==================== 22. QUẦN ÁO (CLOTHING) - 120+ từ ====================
     clothing: {
         name: "👕 QUẦN ÁO - CLOTHING & FASHION",
         words: [
@@ -588,7 +588,7 @@ const VOCABULARY = {
         ]
     },
 
-        // ==================== 31. NGHỆ THUẬT (ART) - 100+ từ ====================
+    // ==================== 31. NGHỆ THUẬT (ART) - 100+ từ ====================
     art: {
         name: "🎭 NGHỆ THUẬT - ART & CREATIVITY",
         words: [
@@ -762,7 +762,7 @@ const VOCABULARY = {
         ]
     },
 
-        // ==================== 40. TRUYỀN THÔNG (MEDIA) - 100+ từ ====================
+    // ==================== 40. TRUYỀN THÔNG (MEDIA) - 100+ từ ====================
     media: {
         name: "📺 TRUYỀN THÔNG - MEDIA",
         words: [
@@ -900,23 +900,34 @@ const VOCABULARY = {
     },
 
     // ==================== 48. THÀNH NGỮ (IDIOMS) - 80+ từ ====================
+    // ĐÃ SỬA: CHỈ GIỮ TIẾNG VIỆT Ở TRƯỜNG vi
     idioms: {
         name: "💬 THÀNH NGỮ - IDIOMS",
         words: [
-            { vi: "piece of cake", en: "piece of cake" }, { vi: "dễ như ăn bánh", en: "piece of cake" }, { vi: "break a leg", en: "break a leg" }, { vi: "chúc may mắn", en: "break a leg" },
-            { vi: "hit the books", en: "hit the books" }, { vi: "học hành chăm chỉ", en: "hit the books" }, { vi: "spill the beans", en: "spill the beans" }, { vi: "lộ bí mật", en: "spill the beans" },
-            { vi: "under the weather", en: "under the weather" }, { vi: "cảm thấy không khỏe", en: "under the weather" }, { vi: "cost an arm and a leg", en: "cost an arm and a leg" }, { vi: "đắt cắt cổ", en: "cost an arm and a leg" },
-            { vi: "bite the bullet", en: "bite the bullet" }, { vi: "đối mặt khó khăn", en: "bite the bullet" }, { vi: "let the cat out of the bag", en: "let the cat out of the bag" }, { vi: "lộ bí mật", en: "let the cat out of the bag" },
-            { vi: "when pigs fly", en: "when pigs fly" }, { vi: "không bao giờ", en: "when pigs fly" }, { vi: "once in a blue moon", en: "once in a blue moon" }, { vi: "hiếm khi", en: "once in a blue moon" },
-            { vi: "kill two birds with one stone", en: "kill two birds with one stone" }, { vi: "một mũi tên trúng hai đích", en: "kill two birds with one stone" }, { vi: "add fuel to the fire", en: "add fuel to the fire" }, { vi: "đổ thêm dầu vào lửa", en: "add fuel to the fire" },
-            { vi: "actions speak louder than words", en: "actions speak louder than words" }, { vi: "hành động có giá trị hơn lời nói", en: "actions speak louder than words" }, { vi: "barking up the wrong tree", en: "barking up the wrong tree" }, { vi: "sai lầm, nhầm đối tượng", en: "barking up the wrong tree" },
-            { vi: "call it a day", en: "call it a day" }, { vi: "kết thúc công việc", en: "call it a day" }, { vi: "cut corners", en: "cut corners" }, { vi: "làm tắt, làm ẩu", en: "cut corners" },
-            { vi: "go the extra mile", en: "go the extra mile" }, { vi: "cố gắng hết mình", en: "go the extra mile" }, { vi: "pull someone's leg", en: "pull someone's leg" }, { vi: "trêu chọc ai", en: "pull someone's leg" },
-            { vi: "see eye to eye", en: "see eye to eye" }, { vi: "đồng quan điểm", en: "see eye to eye" }, { vi: "steal someone's thunder", en: "steal someone's thunder" }, { vi: "cướp spotlight của ai", en: "steal someone's thunder" }
+            { vi: "dễ như ăn bánh", en: "piece of cake" },
+            { vi: "chúc may mắn", en: "break a leg" },
+            { vi: "học hành chăm chỉ", en: "hit the books" },
+            { vi: "lộ bí mật", en: "spill the beans" },
+            { vi: "cảm thấy không khỏe", en: "under the weather" },
+            { vi: "đắt cắt cổ", en: "cost an arm and a leg" },
+            { vi: "đối mặt khó khăn", en: "bite the bullet" },
+            { vi: "lộ bí mật", en: "let the cat out of the bag" },
+            { vi: "không bao giờ", en: "when pigs fly" },
+            { vi: "hiếm khi", en: "once in a blue moon" },
+            { vi: "một mũi tên trúng hai đích", en: "kill two birds with one stone" },
+            { vi: "đổ thêm dầu vào lửa", en: "add fuel to the fire" },
+            { vi: "hành động có giá trị hơn lời nói", en: "actions speak louder than words" },
+            { vi: "sai lầm, nhầm đối tượng", en: "barking up the wrong tree" },
+            { vi: "kết thúc công việc", en: "call it a day" },
+            { vi: "làm tắt, làm ẩu", en: "cut corners" },
+            { vi: "cố gắng hết mình", en: "go the extra mile" },
+            { vi: "trêu chọc ai", en: "pull someone's leg" },
+            { vi: "đồng quan điểm", en: "see eye to eye" },
+            { vi: "cướp spotlight của ai", en: "steal someone's thunder" }
         ]
     },
 
-        // ==================== 49. DU LỊCH BỤI (BACKPACKING) - 90+ từ ====================
+    // ==================== 49. DU LỊCH BỤI (BACKPACKING) - 90+ từ ====================
     backpacking: {
         name: "🎒 DU LỊCH BỤI - BACKPACKING",
         words: [
@@ -1034,7 +1045,7 @@ const VOCABULARY = {
         ]
     },
 
-        // ==================== 56. ẨM THỰC VIỆT NAM (VIETNAMESE CUISINE) - 100+ từ ====================
+    // ==================== 56. ẨM THỰC VIỆT NAM (VIETNAMESE CUISINE) - 100+ từ ====================
     vietnamese_cuisine: {
         name: "🍜 ẨM THỰC VIỆT NAM - VIETNAMESE CUISINE",
         words: [
@@ -1168,7 +1179,7 @@ const VOCABULARY = {
         ]
     },
 
-        // ==================== 64. CRYPTO & BLOCKCHAIN (CRYPTO) - 100+ từ ====================
+    // ==================== 64. CRYPTO & BLOCKCHAIN (CRYPTO) - 100+ từ ====================
     crypto: {
         name: "₿ CRYPTO & BLOCKCHAIN",
         words: [
