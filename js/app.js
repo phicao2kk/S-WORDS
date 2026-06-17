@@ -8,11 +8,104 @@ let streak = parseInt(localStorage.getItem("streak") || "0");
 let lastStudyDate = localStorage.getItem("lastStudyDate") || "";
 
 // Biến cho chức năng xem thêm / thu gọn
-let showAllTopics = false;  // false = thu gọn, true = xem tất cả
+let showAllTopics = false;
 let currentSearchTerm = "";
 let allTopicsList = [];
 
-// DOM elements
+// ==================== ÂM THANH (Web Audio API - Max 100%) ====================
+let audioCtx = null;
+
+// Khởi tạo Audio Context
+function initAudio() {
+    if (!audioCtx) {
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch(e) {
+            console.log('Audio init error:', e);
+        }
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
+// Phát âm thanh đúng - Tiếng chuông vui (MAX VOLUME)
+function playCorrectSound() {
+    try {
+        initAudio();
+        if (!audioCtx) return;
+        
+        const now = audioCtx.currentTime;
+        
+        // Tạo 3 nốt nhạc vui: C4 - E4 - G4
+        const notes = [523.25, 659.25, 783.99];
+        const durations = [0.12, 0.12, 0.15];
+        const startTimes = [0, 0.12, 0.24];
+        
+        notes.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + startTimes[i]);
+            
+            // Âm lượng MAX = 0.5 (để không bị quá to, vẫn nghe rõ)
+            gain.gain.setValueAtTime(0.5, now + startTimes[i]);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + startTimes[i] + durations[i]);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + startTimes[i]);
+            osc.stop(now + startTimes[i] + durations[i]);
+        });
+    } catch(e) {
+        console.log('Correct sound error:', e);
+    }
+}
+
+// Phát âm thanh sai - Tiếng buzz (MAX VOLUME)
+function playWrongSound() {
+    try {
+        initAudio();
+        if (!audioCtx) return;
+        
+        const now = audioCtx.currentTime;
+        
+        // Tạo âm thanh sai (sawtooth)
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, now);
+        osc.frequency.setValueAtTime(150, now + 0.15);
+        osc.frequency.setValueAtTime(100, now + 0.3);
+        
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        
+        // Thêm hiệu ứng âm thanh rè
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'square';
+        osc2.frequency.setValueAtTime(80, now);
+        gain2.gain.setValueAtTime(0.15, now);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        
+        osc.start(now);
+        osc.stop(now + 0.45);
+        osc2.start(now);
+        osc2.stop(now + 0.4);
+    } catch(e) {
+        console.log('Wrong sound error:', e);
+    }
+}
+
+// ==================== DOM elements ====================
 const topicContainer = document.getElementById("topic-container");
 const vietnameseWordEl = document.getElementById("vietnameseWord");
 const answerInput = document.getElementById("answerInput");
@@ -22,9 +115,9 @@ const speakBtn = document.getElementById("speakBtn");
 const randomBtn = document.getElementById("randomBtn");
 const resultArea = document.getElementById("resultArea");
 const streakCountEl = document.getElementById("streakCount");
-const currentTopicNameEl = document.getElementById("currentTopicName"); // 👈 THÊM MỚI
+const currentTopicNameEl = document.getElementById("currentTopicName");
 
-// Cập nhật streak
+// ==================== Cập nhật streak ====================
 function updateStreak() {
     const today = new Date().toDateString();
     if (lastStudyDate !== today) {
@@ -42,16 +135,15 @@ function updateStreak() {
     if (streakCountEl) streakCountEl.textContent = streak;
 }
 
-// Cập nhật tên chủ đề hiện tại
+// ==================== Cập nhật tên chủ đề ====================
 function updateTopicName() {
     if (currentTopicNameEl && vocabulary[currentTopic]) {
         const topicName = vocabulary[currentTopic].name;
-        // Hiển thị đầy đủ với "Chủ đề:" phía trước
         currentTopicNameEl.innerHTML = `📚 Chủ đề: <span class="font-bold">${topicName}</span>`;
     }
 }
 
-// Hiển thị từ hiện tại
+// ==================== Hiển thị từ ====================
 function displayWord() {
     if (currentWordObj) {
         vietnameseWordEl.textContent = currentWordObj.vi;
@@ -59,12 +151,11 @@ function displayWord() {
         resultArea.innerHTML = "";
         resultArea.className = "rounded-2xl p-4 transition-all min-h-[100px]";
         answerInput.focus();
-        // Cập nhật tên chủ đề
         updateTopicName();
     }
 }
 
-// Lấy từ ngẫu nhiên từ chủ đề hiện tại
+// ==================== Lấy từ ngẫu nhiên ====================
 function getRandomWord() {
     const topicWords = vocabulary[currentTopic]?.words || [];
     if (topicWords.length === 0) return null;
@@ -72,20 +163,25 @@ function getRandomWord() {
     return topicWords[randomIndex];
 }
 
-// Chọn từ mới
 function selectNewWord() {
     currentWordObj = getRandomWord();
     displayWord();
 }
 
-// Kiểm tra đáp án
+// ==================== Kiểm tra đáp án ====================
 function checkAnswer() {
     if (!currentWordObj) return;
+    
+    // Khởi tạo audio khi người dùng tương tác lần đầu
+    initAudio();
     
     const userAnswer = answerInput.value.trim().toLowerCase();
     const correctAnswer = currentWordObj.en.toLowerCase();
     
     if (userAnswer === correctAnswer) {
+        // PHÁT ÂM THANH ĐÚNG
+        playCorrectSound();
+        
         resultArea.innerHTML = `
             <div class="correct-answer text-white p-4 rounded-xl text-center">
                 <i class="fas fa-check-circle text-2xl mb-2"></i>
@@ -113,6 +209,9 @@ function checkAnswer() {
             selectNewWord();
         }, 1500);
     } else {
+        // PHÁT ÂM THANH SAI
+        playWrongSound();
+        
         if (typeof addWrongWord === 'function') {
             addWrongWord(currentWordObj.vi, currentWordObj.en, currentTopic);
         }
@@ -143,6 +242,7 @@ function checkAnswer() {
     }
 }
 
+// ==================== Các hàm điều hướng ====================
 function nextWord() {
     selectNewWord();
 }
@@ -160,12 +260,13 @@ function speakWord() {
         const utterance = new SpeechSynthesisUtterance(currentWordObj.en);
         utterance.lang = 'en-US';
         utterance.rate = 0.9;
+        utterance.volume = 1; // MAX VOLUME
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(utterance);
     }
 }
 
-// Tạo danh sách các chủ đề
+// ==================== Quản lý chủ đề ====================
 function buildTopicsList() {
     allTopicsList = Object.keys(vocabulary).map(key => ({
         key: key,
@@ -176,7 +277,6 @@ function buildTopicsList() {
     return allTopicsList;
 }
 
-// Lọc chủ đề theo từ khóa
 function filterTopics() {
     const searchTerm = currentSearchTerm.toLowerCase();
     if (!searchTerm) return allTopicsList;
@@ -186,7 +286,6 @@ function filterTopics() {
     );
 }
 
-// Cập nhật nút Xem thêm và Thu gọn
 function updateActionButtons() {
     const filtered = filterTopics();
     const hiddenCount = filtered.length - 12;
@@ -196,36 +295,29 @@ function updateActionButtons() {
     if (!showMoreBtn || !collapseBtn) return;
     
     if (showAllTopics) {
-        // Đang xem tất cả → hiện nút Thu gọn
         showMoreBtn.classList.add("hidden");
         collapseBtn.classList.remove("hidden");
     } else {
-        // Đang thu gọn
         collapseBtn.classList.add("hidden");
         if (hiddenCount > 0) {
-            // Có chủ đề bị ẩn → hiện nút Xem thêm
             showMoreBtn.classList.remove("hidden");
             const hiddenCountSpan = document.getElementById("hiddenCount");
             if (hiddenCountSpan) hiddenCountSpan.textContent = hiddenCount;
             const btnSpan = showMoreBtn.querySelector('span');
             if (btnSpan) btnSpan.textContent = hiddenCount;
         } else {
-            // Không có chủ đề bị ẩn → ẩn cả hai nút
             showMoreBtn.classList.add("hidden");
         }
     }
 }
 
-// Render chủ đề
 function renderTopics() {
     const filtered = filterTopics();
     const maxVisible = showAllTopics ? filtered.length : 12;
     const visibleTopics = filtered.slice(0, maxVisible);
     
-    // Cập nhật nút
     updateActionButtons();
     
-    // Cập nhật chiều cao container
     const container = document.getElementById("topic-container");
     if (container) {
         if (!showAllTopics) {
@@ -237,21 +329,18 @@ function renderTopics() {
         }
     }
     
-    // Render các nút chủ đề
     topicContainer.innerHTML = visibleTopics.map(topic => `
         <button data-topic="${topic.key}" class="topic-chip px-4 py-2 rounded-full text-sm font-bold transition-all shadow-sm bg-white/80 hover:bg-white ${currentTopic === topic.key ? 'active' : ''}">
             ${topic.name}
         </button>
     `).join('');
     
-    // Gắn sự kiện cho các nút chủ đề
     document.querySelectorAll('.topic-chip').forEach(btn => {
         btn.addEventListener('click', () => {
             currentTopic = btn.dataset.topic;
             highlightActiveTopic();
             selectNewWord();
             
-            // 🆕 TỰ ĐỘNG THU GỌN LẠI SAU KHI CHỌN CHỦ ĐỀ
             if (showAllTopics) {
                 showAllTopics = false;
                 renderTopics();
@@ -260,19 +349,16 @@ function renderTopics() {
     });
 }
 
-// Xem thêm chủ đề
 function showMoreTopics() {
     showAllTopics = true;
     renderTopics();
 }
 
-// Thu gọn danh sách
 function collapseTopics() {
     showAllTopics = false;
     renderTopics();
 }
 
-// Highlight chủ đề đang chọn
 function highlightActiveTopic() {
     document.querySelectorAll('.topic-chip').forEach(btn => {
         if (btn.dataset.topic === currentTopic) {
@@ -281,12 +367,16 @@ function highlightActiveTopic() {
             btn.classList.remove('active');
         }
     });
-    // Cập nhật tên chủ đề khi chọn bằng cách click
     updateTopicName();
 }
 
-// Khởi tạo
+// ==================== Khởi tạo ====================
 function init() {
+    // Khởi tạo audio khi người dùng click vào trang
+    document.addEventListener('click', () => {
+        initAudio();
+    }, { once: false });
+    
     buildTopicsList();
     renderTopics();
     selectNewWord();
@@ -300,23 +390,20 @@ function init() {
         if (e.key === "Enter") checkAnswer();
     });
     
-    // Thanh tìm kiếm
     const searchInput = document.getElementById("topicSearch");
     if (searchInput) {
         searchInput.addEventListener("input", (e) => {
             currentSearchTerm = e.target.value;
-            showAllTopics = false; // Khi tìm kiếm, tự động thu gọn
+            showAllTopics = false;
             renderTopics();
         });
     }
     
-    // Nút xem thêm
     const showMoreBtn = document.getElementById("showMoreBtn");
     if (showMoreBtn) {
         showMoreBtn.addEventListener("click", showMoreTopics);
     }
     
-    // Nút thu gọn
     const collapseBtn = document.getElementById("collapseBtn");
     if (collapseBtn) {
         collapseBtn.addEventListener("click", collapseTopics);
