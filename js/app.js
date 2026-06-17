@@ -22,6 +22,7 @@ const speakBtn = document.getElementById("speakBtn");
 const randomBtn = document.getElementById("randomBtn");
 const resultArea = document.getElementById("resultArea");
 const streakCountEl = document.getElementById("streakCount");
+const currentTopicNameEl = document.getElementById("currentTopicName"); // 👈 THÊM MỚI
 
 // Cập nhật streak
 function updateStreak() {
@@ -38,7 +39,16 @@ function updateStreak() {
         localStorage.setItem("streak", streak);
         localStorage.setItem("lastStudyDate", lastStudyDate);
     }
-    streakCountEl.textContent = streak;
+    if (streakCountEl) streakCountEl.textContent = streak;
+}
+
+// Cập nhật tên chủ đề hiện tại
+function updateTopicName() {
+    if (currentTopicNameEl && vocabulary[currentTopic]) {
+        const topicName = vocabulary[currentTopic].name;
+        // Hiển thị đầy đủ với "Chủ đề:" phía trước
+        currentTopicNameEl.innerHTML = `📚 Chủ đề: <span class="font-bold">${topicName}</span>`;
+    }
 }
 
 // Hiển thị từ hiện tại
@@ -49,6 +59,8 @@ function displayWord() {
         resultArea.innerHTML = "";
         resultArea.className = "rounded-2xl p-4 transition-all min-h-[100px]";
         answerInput.focus();
+        // Cập nhật tên chủ đề
+        updateTopicName();
     }
 }
 
@@ -269,6 +281,8 @@ function highlightActiveTopic() {
             btn.classList.remove('active');
         }
     });
+    // Cập nhật tên chủ đề khi chọn bằng cách click
+    updateTopicName();
 }
 
 // Khởi tạo
